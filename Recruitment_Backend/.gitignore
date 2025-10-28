@@ -1,0 +1,49 @@
+# ======================================
+# === Java & Spring Boot (Gradle) ===
+# ======================================
+
+# Build outputs
+/build/
+!/src/main/
+/out/
+/bin/
+/target/
+
+# Gradle
+.gradle/
+**/build/
+gradle-app.setting
+gradle-app.setting.lock
+gradle-app.properties
+!gradle/wrapper/gradle-wrapper.jar
+gradle-app.setting
+gradle-app.setting.lock
+!gradlew
+!gradlew.bat
+!gradle/wrapper/**
+
+# Logs
+*.log
+*.log.*
+*.out
+
+# VS Code
+.vscode/
+.history/
+
+# Temporary files
+*.tmp
+*.swp
+*~
+*.bak
+
+# Test reports
+/test-results/
+*/test-output/
+*/surefire-reports/
+*/jacoco/
+*.exec
+
+# Dependency caches
+.cache/
+*.lock
