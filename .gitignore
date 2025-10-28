@@ -1,0 +1,178 @@
+##############################
+# 🌿 GLOBAL IGNORE SETTINGS  #
+##############################
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+desktop.ini
+
+# Logs
+*.log
+*.out
+*.tmp
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDEs
+.vscode/
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+##############################
+# ⚙️ REACT (VITE + JS + TAILWIND)
+##############################
+
+# Build output
+dist/
+build/
+.cache/
+.cache-loader/
+.eslintcache
+vite.config.ts.timestamp-*
+
+# Coverage & test outputs
+coverage/
+*.lcov
+jest-results.json
+
+# Misc
+*.tgz
+*.zip
+*.tar.gz
+*.rar
+
+##############################
+# ☕ SPRING BOOT (Gradle or Maven)
+##############################
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# VM crash logs
+hs_err_pid*
+replay_pid*
+
+##############################
+# 🧱 GRADLE
+##############################
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Gradle caches
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Spring Boot secrets
+src/main/resources/application.properties
+
+
+# Wrapper properties
+gradle-app.setting
+gradle.properties
+.gradle/
+
+##############################
+# 🧩 MAVEN (if used)
+##############################
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+##############################
+# 🧰 STS / ECLIPSE
+##############################
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+##############################
+# 💡 INTELLIJ IDEA
+##############################
+.idea/
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+##############################
+# 🧪 TESTS / COVERAGE
+##############################
+test-output/
+reports/
+build/reports/
+jacoco.exec
+*.lcov
+
+##############################
+# ⚡ SYSTEM / TEMP FILES
+##############################
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+*.pid
+*.seed
+*.orig
+
+##############################
+# 🧾 OTHER
+##############################
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code workspace history
+.history/
