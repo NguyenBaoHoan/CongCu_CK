@@ -6,17 +6,22 @@ import com.example.jobhunter.dto.response.ResLoginDTO;
 import com.example.jobhunter.util.error.IdInvalidException;
 import com.example.jobhunter.util.error.SecurityUtil;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class AuthService {
     private final UserService userService;
     private final SecurityUtil securityUtil;
-    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
     public AuthService(
@@ -26,7 +31,6 @@ public class AuthService {
             PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.securityUtil = securityUtil;
-        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -44,7 +48,6 @@ public class AuthService {
         return this.userService.handleSaveUser(newUser);
     }
 
-    // ✅ THÊM PHƯƠNG THỨC MỚI NÀY
     /**
      * Đăng ký một user mới từ OAuth2.
      * Vì họ không có password, nên ta tạo một password ngẫu nhiên.
@@ -66,12 +69,16 @@ public class AuthService {
     }
 
     public ResLoginDTO login(String username, String password) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
-                password);
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        User currentUser = this.userService.handleGetUserByEmail(username);
+        User currentUser = userService.handleGetUserByEmail(username);
+        if (currentUser == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+
+        if (!passwordEncoder.matches(password, currentUser.getPassWord())) {
+            throw new BadCredentialsException("Invalid password");
+        }
+
         ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
                 currentUser.getId(),
                 currentUser.getEmail(),
@@ -79,12 +86,67 @@ public class AuthService {
 
         ResLoginDTO res = new ResLoginDTO();
         res.setUser(userLogin);
-        String accessToken = this.securityUtil.createAccessToken(authentication.getName(), res.getUser());
-        res.setAccessToken(accessToken);
 
-        String refreshToken = this.securityUtil.createRefreshToken(username, res);
-        this.userService.updateUserToken(refreshToken, username);
+        String accessToken = securityUtil.createAccessToken(username, userLogin);
+        String refreshToken = securityUtil.createRefreshToken(username, res);
+        res.setAccessToken(accessToken);
+        res.setRefreshToken(refreshToken);
+
+
+        userService.updateUserToken(refreshToken, username);
+
+        List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return res;
     }
+
+        /**
+     * Xử lý logic refresh token: kiểm tra token, lấy user, tạo access token và refresh token mới, cập nhật DB, trả về DTO
+     */
+    public ResLoginDTO handleRefreshToken(String refreshToken) {
+        try {
+            // Kiểm tra token hợp lệ
+            org.springframework.security.oauth2.jwt.Jwt decodedToken = securityUtil.checkValidRefreshToken(refreshToken);
+            String email = decodedToken.getSubject();
+
+            // Kiểm tra user với token và email
+            User currentUser = userService.getUserByRefreshTokenAndEmail(refreshToken, email);
+            if (currentUser == null) {
+                return null;
+            }
+
+            // Lấy thông tin user
+            User userDB = userService.handleGetUserByEmail(email);
+            if (userDB == null) {
+                return null;
+            }
+
+            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
+                    userDB.getId(),
+                    userDB.getEmail(),
+                    userDB.getName()
+            );
+
+            ResLoginDTO res = new ResLoginDTO();
+            res.setUser(userLogin);
+
+            // Tạo access token mới
+            String accessToken = securityUtil.createAccessToken(email, userLogin);
+            res.setAccessToken(accessToken);
+
+            // Tạo refresh token mới
+            String newRefreshToken = securityUtil.createRefreshToken(email, res);
+            res.setRefreshToken(newRefreshToken);
+
+            // Cập nhật refresh token vào DB
+            userService.updateUserToken(newRefreshToken, email);
+
+            return res;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

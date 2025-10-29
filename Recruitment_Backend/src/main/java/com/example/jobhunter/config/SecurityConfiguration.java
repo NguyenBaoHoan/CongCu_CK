@@ -1,7 +1,5 @@
 package com.example.jobhunter.config;
 
-import java.nio.charset.StandardCharsets;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -11,8 +9,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
+import org.springframework.context.annotation.Primary;
+
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -34,10 +32,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.jobhunter.util.*;
-import com.example.jobhunter.domain.User;
-import com.example.jobhunter.dto.response.ResLoginDTO;
-import com.example.jobhunter.service.AuthService;
-import com.example.jobhunter.service.UserService;
 import com.example.jobhunter.util.error.SecurityUtil;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
@@ -60,13 +54,14 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+    @Bean 
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
+    
     @Bean
-    public SecurityFilterChain fillterChain(HttpSecurity http,
+    @Primary
+    public SecurityFilterChain filterChain(HttpSecurity http,
             AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
             AuthenticationFailureHandler oAuth2AuthenticationFailureHandler,
             AuthorizationRequestRepository<OAuth2AuthorizationRequest> cookieAuthorizationRequestRepository)
@@ -154,63 +149,6 @@ public class SecurityConfiguration {
     @Bean
     public AuthorizationRequestRepository<OAuth2AuthorizationRequest> cookieAuthorizationRequestRepository() {
         return new HttpCookieOAuth2AuthorizationRequestRepository();
-    }
-
-    /**
-     * Handler xử lý khi login OAuth2 thành công.
-     * Đây là nơi tích hợp: Sẽ tạo/cập nhật user,
-     * sau đó gọi logic tạo JWT và set cookie y hệt như login thường.
-     */
-    @Bean
-    public AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler(
-            UserService userService,
-            AuthService authService,
-            SecurityUtil securityUtil) {
-        return (request, response, authentication) -> {
-            OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
-            String email = oidcUser.getEmail();
-            String name = oidcUser.getFullName();
-
-            User user = userService.handleGetUserByEmail(email);
-            if (user == null) {
-                user = authService.registerOauthUser(email, name);
-            }
-
-            ResLoginDTO res = new ResLoginDTO();
-            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
-                    user.getId(),
-                    user.getEmail(),
-                    user.getName());
-            res.setUser(userLogin);
-
-            String accessToken = securityUtil.createAccessToken(email, res.getUser());
-            res.setAccessToken(accessToken);
-
-            String refreshToken = securityUtil.createRefreshToken(email, res);
-            userService.updateUserToken(refreshToken, email);
-
-            ResponseCookie refreshCookie = ResponseCookie
-                    .from("refresh_token", refreshToken)
-                    .httpOnly(true)
-                    .secure(true) // Set false nếu dev không có HTTPS
-                    .path("/")
-                    .maxAge(refreshTokenExpiration) // Dùng giá trị từ properties
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-
-            String redirectUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/login")
-                    .queryParam("oauth", "success")
-                    .queryParam("provider", "google")
-                    .queryParam("email", user.getEmail())
-                    .queryParam("name", user.getName())
-                    .queryParam("access_token", accessToken)
-                    .encode(StandardCharsets.UTF_8)
-                    .build().toUriString();
-
-            HttpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
-
-            response.sendRedirect(redirectUrl);
-        };
     }
 
     /**
