@@ -9,13 +9,13 @@ import ProtectedRoute from './components/layout/ProtectedRoute'
 
 import App from './App'
 import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import DashboardPage from './pages/DashboardPage'
-import GoogleLoginTest from './GoogleLoginTest'
-import AllJobPage from './pages/jobs/AllJobsPage'
-import SearchJobPage from './pages/jobs/SearchJobsPage'
-import SavedJobsPage from './pages/jobs/SavedJobsPage'
-import JobDetailPage from './pages/jobs/JobDetailPage'
+// // import RegisterPage from './pages/RegisterPage'
+// // import DashboardPage from './pages/DashboardPage'
+// import GoogleLoginTest from './GoogleLoginTest'
+// import AllJobPage from './pages/jobs/AllJobsPage'
+// import SearchJobPage from './pages/jobs/SearchJobsPage'
+// import SavedJobsPage from './pages/jobs/SavedJobsPage'
+// import JobDetailPage from './pages/jobs/JobDetailPage'
 
 
 const router = createBrowserRouter([
