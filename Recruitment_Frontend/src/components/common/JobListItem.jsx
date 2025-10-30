@@ -1,5 +1,4 @@
-import React from "react";
-import { Briefcase, MapPin, Calendar } from "lucide-react";
+import { formatDate } from "../../utils/format";
 
 const ListItem = ({ job, onClick }) => {
 
@@ -20,12 +19,12 @@ const ListItem = ({ job, onClick }) => {
                     {job.name}
                 </h2>
                 <span
-                    className={`px-3 py-1 text-sm font-medium rounded-full flex-shrink-0 ml-3 ${job.is_active
+                    className={`px-3 py-1 text-sm font-medium rounded-full flex-shrink-0 ml-3 ${job.active
                         ? "bg-green-100 text-green-800 border border-green-200"
                         : "bg-red-100 text-red-800 border border-red-200"
                         }`}
                 >
-                    {job.is_active ? "Đang tuyển" : "Hết hạn"}
+                    {job.active ? "Đang tuyển" : "Hết hạn"}
                 </span>
             </div>
 
@@ -47,7 +46,7 @@ const ListItem = ({ job, onClick }) => {
                     <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
-                    <span className="truncate">{job.job_type}</span>
+                    <span className="truncate">{job.jobType}</span>
                 </div>
             </div>
 
@@ -57,13 +56,13 @@ const ListItem = ({ job, onClick }) => {
                         <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <span className="truncate">Bắt đầu: {job.start_date}</span>
+                        <span className="truncate">Bắt đầu: {formatDate(job.startDate)}</span>
                     </div>
                     <div className="flex items-center gap-1">
                         <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <span className="truncate">Kết thúc: {job.end_date}</span>
+                        <span className="truncate">Kết thúc: {formatDate(job.startDate)}</span>
                     </div>
                 </div>
             </div>

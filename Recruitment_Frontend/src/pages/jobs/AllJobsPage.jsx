@@ -18,7 +18,7 @@ const AllJobsPage = () => {
     //         work_address: "Tòa nhà ABC, Quận 1, TP.HCM",
     //         start_date: "2025-01-01",
     //         end_date: "2025-02-15",
-    //         is_active: true,
+    //         active: true,
     //     },
     //     {
     //         id: 2,
@@ -29,7 +29,7 @@ const AllJobsPage = () => {
     //         work_address: "Tòa nhà XYZ, Quận Cầu Giấy, Hà Nội",
     //         start_date: "2025-02-01",
     //         end_date: "2025-03-10",
-    //         is_active: false,
+    //         active: false,
     //     },
     //     {
     //         id: 3,
@@ -40,7 +40,7 @@ const AllJobsPage = () => {
     //         work_address: "123 Lê Duẩn, Đà Nẵng",
     //         start_date: "2025-01-15",
     //         end_date: "2025-02-28",
-    //         is_active: true,
+    //         active: true,
     //     },
     //     {
     //         id: 4,
@@ -51,7 +51,7 @@ const AllJobsPage = () => {
     //         work_address: "45 Nguyễn Văn Cừ, Cần Thơ",
     //         start_date: "2025-01-20",
     //         end_date: "2025-03-20",
-    //         is_active: true,
+    //         active: true,
     //     },
     //     {
     //         id: 5,
@@ -62,7 +62,7 @@ const AllJobsPage = () => {
     //         work_address: "Tòa nhà Bitexco, Quận 1, TP.HCM",
     //         start_date: "2025-02-05",
     //         end_date: "2025-03-25",
-    //         is_active: false,
+    //         active: false,
     //     },
     //     {
     //         id: 6,
@@ -73,7 +73,7 @@ const AllJobsPage = () => {
     //         work_address: "Làm việc từ xa",
     //         start_date: "2025-01-10",
     //         end_date: "2025-02-20",
-    //         is_active: true,
+    //         active: true,
     //     },
     //     {
     //         id: 7,
@@ -84,7 +84,7 @@ const AllJobsPage = () => {
     //         work_address: "Tòa nhà Viettel, Quận 10, TP.HCM",
     //         start_date: "2025-03-01",
     //         end_date: "2025-05-01",
-    //         is_active: true,
+    //         active: true,
     //     },
     //     {
     //         id: 8,
@@ -95,7 +95,7 @@ const AllJobsPage = () => {
     //         work_address: "Làm việc từ xa",
     //         start_date: "2025-02-15",
     //         end_date: "2025-04-15",
-    //         is_active: true,
+    //         active: true,
     //     },
     //     // Thêm nhiều job hơn để test phân trang
     //     {
@@ -107,7 +107,7 @@ const AllJobsPage = () => {
     //         work_address: "Tòa nhà Hà Nội Group",
     //         start_date: "2025-03-01",
     //         end_date: "2025-04-30",
-    //         is_active: true,
+    //         active: true,
     //     },
     //     {
     //         id: 10,
@@ -118,7 +118,7 @@ const AllJobsPage = () => {
     //         work_address: "147 Trần Phú, Đà Nẵng",
     //         start_date: "2025-02-01",
     //         end_date: "2025-03-31",
-    //         is_active: true,
+    //         active: true,
     //     },
     //     {
     //         id: 11,
@@ -129,7 +129,7 @@ const AllJobsPage = () => {
     //         work_address: "Quận 3, TP.HCM",
     //         start_date: "2025-01-25",
     //         end_date: "2025-03-15",
-    //         is_active: false,
+    //         active: false,
     //     },
     //     {
     //         id: 12,
@@ -140,7 +140,7 @@ const AllJobsPage = () => {
     //         work_address: "Quận Thanh Xuân, Hà Nội",
     //         start_date: "2025-02-10",
     //         end_date: "2025-04-10",
-    //         is_active: true,
+    //         active: true,
     //     }
     // ];
 
@@ -171,15 +171,17 @@ const AllJobsPage = () => {
         return () => { mounted = false; };
     }, []);
 
+    console.log(jobs);
+
     const filteredJobs = useMemo(() => {
         return jobs.filter(job => {
             const matchesSearch = job.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 job.location.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesLocation = !locationFilter || job.location === locationFilter;
-            const matchesJobType = !jobTypeFilter || job.job_type === jobTypeFilter;
+            const matchesJobType = !jobTypeFilter || job.jobType === jobTypeFilter;
             const matchesStatus = !statusFilter ||
-                (statusFilter === "active" && job.is_active) ||
-                (statusFilter === "inactive" && !job.is_active);
+                (statusFilter === "active" && job.active) ||
+                (statusFilter === "inactive" && !job.active);
 
             return matchesSearch && matchesLocation && matchesJobType && matchesStatus;
         });
