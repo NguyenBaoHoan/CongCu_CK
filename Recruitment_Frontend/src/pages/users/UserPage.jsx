@@ -29,6 +29,18 @@ export default function UsersPage() {
 
   const onCreate = () => setModal({ open: true, editing: null });
   const onEdit = (u) => setModal({ open: true, editing: u });
+  const onDelete = async (u) => {
+    if (!window.confirm(`Xóa người dùng: ${u.name}?`)) return;
+    try {
+      setSubmitting(true);
+      await userService.remove(u.id);
+      await fetchData();
+    } catch (e) {
+      alert(e?.message || 'Xóa thất bại');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const onSubmitForm = async (payload) => {
     try {
@@ -73,8 +85,7 @@ export default function UsersPage() {
 
         {error && <div className="p-3 bg-red-50 text-red-700 border border-red-200 rounded">{error}</div>}
 
-        {/* Task 1: chỉ truyền onEdit, không có onDelete */}
-        <UserTable data={data} loading={loading} onEdit={onEdit} />
+        <UserTable data={data} loading={loading} onEdit={onEdit} onDelete={onDelete} />
 
         <div className="flex items-center gap-2">
           <span className="text-sm">Trang:</span>
@@ -98,7 +109,6 @@ export default function UsersPage() {
           </select>
         </div>
 
-        {/* Task 2: Modal tạo/sửa */}
         {modal.open && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4">
             <div className="bg-white rounded-lg p-6 w-full max-w-lg">
