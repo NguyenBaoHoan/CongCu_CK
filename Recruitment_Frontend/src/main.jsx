@@ -12,7 +12,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 // // import DashboardPage from './pages/DashboardPage'
 // import GoogleLoginTest from './GoogleLoginTest'
-// import AllJobPage from './pages/jobs/AllJobsPage'
+import AllJobPage from './pages/jobs/AllJobsPage'
 // import SearchJobPage from './pages/jobs/SearchJobsPage'
 // import SavedJobsPage from './pages/jobs/SavedJobsPage'
 // import JobDetailPage from './pages/jobs/JobDetailPage'
@@ -43,10 +43,13 @@ const router = createBrowserRouter([
       //     </ProtectedRoute>
       //   )
       // },
-      // {
-      //   path: "jobs",
-      //   element: <AllJobPage />
-      // },
+      {
+        path: "jobs",
+        element:
+          <ProtectedRoute>
+            <AllJobPage />
+          </ProtectedRoute>
+      },
       // {
       //   path: "search",
       //   element: <SearchJobPage />

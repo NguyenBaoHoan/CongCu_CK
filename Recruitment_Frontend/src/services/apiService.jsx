@@ -1,106 +1,86 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { useNotification } from '../hooks/useNotification';
 
-/**
- * Axios instance
- * - withCredentials: true → Tự động gửi cookies (refresh_token)
- * - Không cần Authorization header vì sẽ được thêm động
- */
+const BASE_URL = import.meta?.env?.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/api/v1',
+  baseURL: BASE_URL,
   timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true, // ⚠️ Quan trọng: Cho phép gửi/nhận cookies
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
 });
 
-// Biến toàn cục để lưu access token (trong memory, không phải localStorage)
-let accessToken = null;
+const refreshClient = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+});
 
 /**
- * Set access token vào memory
+ * Lưu access token vào memory và sessionStorage
+ * để giữ được sau khi F5
  */
+let accessToken = sessionStorage.getItem('accessToken') || null;
+
 export const setAccessToken = (token) => {
   accessToken = token;
+  sessionStorage.setItem('accessToken', token);
 };
 
-/**
- * Get access token từ memory
- */
-export const getAccessToken = () => {
-  return accessToken;
-};
+export const getAccessToken = () => accessToken;
 
-/**
- * Clear access token
- */
 export const clearAccessToken = () => {
   accessToken = null;
+  sessionStorage.removeItem('accessToken');
 };
 
-/**
- * Request Interceptor
- * Tự động thêm access token vào header
- */
 apiClient.interceptors.request.use(
   (config) => {
-    // Nếu có access token, thêm vào Authorization header
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    
-    console.log('🚀 Request:', config.method.toUpperCase(), config.url);
+
+    if (import.meta.env.DEV) {
+      const method = (config.method || '').toUpperCase();
+      console.log(`🚀 [${method}] ${config.url}`);
+    }
+
     return config;
   },
-  (error) => {
-    console.error('❌ Request Error:', error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-/**
- * Response Interceptor
- * Xử lý auto refresh token khi 401
- */
 let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
-  failedQueue.forEach(prom => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
+  failedQueue.forEach(({ resolve, reject }) => {
+    if (error) reject(error);
+    else resolve(token);
   });
-  
   failedQueue = [];
 };
 
 apiClient.interceptors.response.use(
   (response) => {
-    console.log('✅ Response:', response.status, response.config.url);
+    if (import.meta.env.DEV) {
+      console.log(`✅ [${response.status}] ${response.config.url}`);
+    }
     return response;
   },
   async (error) => {
     const originalRequest = error.config;
 
-    // Kiểm tra nếu là lỗi 401 và chưa retry
     if (
-      error.response?.status === 401 && 
+      error.response?.status === 401 &&
       !originalRequest._retry &&
-      originalRequest.url !== '/auth/refresh' // Tránh refresh token loop
+      !originalRequest.url.includes('/auth/refresh')
     ) {
-      // Nếu đang refresh, thêm request vào queue
       if (isRefreshing) {
+
         try {
-          const token = await new Promise((resolve, reject) => {
-            failedQueue.push({ resolve, reject });
-          });
-          originalRequest.headers.Authorization = `Bearer ${token}`;
+          const newToken = await new Promise((resolve, reject) =>
+            failedQueue.push({ resolve, reject })
+          );
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return apiClient(originalRequest);
         } catch (err) {
           return Promise.reject(err);
@@ -111,66 +91,54 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Gọi refresh token API với timeout ngắn hơn
-        const response = await axios.get('http://localhost:8080/api/v1/auth/refresh', {
-          withCredentials: true,
-          timeout: 5000 // Giảm timeout để fail fast
-        });
+        const res = await refreshClient.get('/auth/refresh');
+        const newAccessToken = res.data?.accessToken;
 
-        const newAccessToken = response.data.access_token;
-        if (!newAccessToken) {
-          throw new Error('No access token received');
-        }
+        if (!newAccessToken) throw new Error('Không nhận được access token mới');
 
-        // Lưu token mới
         setAccessToken(newAccessToken);
-        
-        // Xử lý queue
         processQueue(null, newAccessToken);
-        
-        // Retry request gốc
+
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return apiClient(originalRequest);
-        
       } catch (refreshError) {
-        // Xử lý lỗi refresh token
         processQueue(refreshError, null);
         clearAccessToken();
 
-        // Nếu refresh token hết hạn hoặc không hợp lệ
-        if (refreshError.response?.status === 401 || refreshError.response?.status === 403) {
-          // Clear storage và redirect về login
-          const { logout } = useAuth();
-          const { showError } = useNotification();
-          
-          await logout(); // This will clear storage and auth context
-          showError('Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.');
-          window.location.href = '/login';
-        } else {
-          // Các lỗi khác (network, server, etc)
-          console.error('Refresh token error:', refreshError);
-          const { showError } = useNotification();
-          showError('Có lỗi xảy ra khi làm mới phiên làm việc. Vui lòng đăng nhập lại.');
-          window.location.href = '/login';
-        }
-        
+        window.dispatchEvent(
+          new CustomEvent('auth:expired', {
+            detail: { message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.' },
+          })
+        );
+
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
 
-    // Xử lý các lỗi không phải 401
-    console.error('❌ Response Error:', {
-      status: error.response?.status,
-      url: error.config?.url,
-      message: error.response?.data?.message || error.message
-    });
+    const status = error.response?.status;
+    const message = error.response?.data?.message || error.message || 'Đã xảy ra lỗi';
+    if (import.meta.env.DEV) {
+      console.error(`❌ [${status}] ${originalRequest?.url}: ${message}`);
+    }
 
-    // Trả về error message từ server hoặc default message
-    const errorMessage = error.response?.data?.message || error.message || 'Something went wrong';
-    return Promise.reject(new Error(errorMessage));
+    return Promise.reject(new Error(message));
   }
 );
+
+
+export const initAuth = async () => {
+  try {
+
+    if (!getAccessToken()) {
+      const res = await refreshClient.get('/auth/refresh');
+      const newToken = res.data?.accessToken;
+      if (newToken) setAccessToken(newToken);
+    }
+  } catch {
+    clearAccessToken();
+  }
+};
 
 export { apiClient };

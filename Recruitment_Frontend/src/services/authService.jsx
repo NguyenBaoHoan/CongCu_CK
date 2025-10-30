@@ -18,8 +18,8 @@ export const authService = {
     });
 
     // Lưu access token vào memory
-    if (response.data.access_token) {
-      setAccessToken(response.data.access_token);
+    if (response.data.accessToken) {
+      setAccessToken(response.data.accessToken);
     }
 
     // refresh_token đã được backend set vào cookie tự động
@@ -70,10 +70,10 @@ export const authService = {
     try {
       const response = await apiClient.get('/auth/refresh');
       
-      if (response.data.access_token) {
-        setAccessToken(response.data.access_token);
+      if (response.data.accessToken) {
+        setAccessToken(response.data.accessToken);
       }
-      
+
       return response.data;
     } catch (error) {
       clearAccessToken();
