@@ -9,7 +9,7 @@ import ProtectedRoute from './components/layout/ProtectedRoute'
 
 import App from './App'
 import LoginPage from './pages/LoginPage'
-// // import RegisterPage from './pages/RegisterPage'
+import RegisterPage from './pages/RegisterPage'
 // // import DashboardPage from './pages/DashboardPage'
 // import GoogleLoginTest from './GoogleLoginTest'
 // import AllJobPage from './pages/jobs/AllJobsPage'

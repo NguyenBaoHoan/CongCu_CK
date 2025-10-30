@@ -36,6 +36,8 @@ import com.example.jobhunter.util.error.SecurityUtil;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
@@ -60,37 +62,44 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Primary
-    public SecurityFilterChain filterChain(HttpSecurity http,
-            AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
-            AuthenticationFailureHandler oAuth2AuthenticationFailureHandler,
-            AuthorizationRequestRepository<OAuth2AuthorizationRequest> cookieAuthorizationRequestRepository)
-            throws Exception {
-        http
-                .csrf(c -> c.disable())
-                .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(
-                                "/api/v1/auth/**",
-                                "/")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/jobs/**").permitAll()
-                        .anyRequest().authenticated())
+@Primary
+public SecurityFilterChain filterChain(HttpSecurity http,
+        AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
+        AuthenticationFailureHandler oAuth2AuthenticationFailureHandler,
+        AuthorizationRequestRepository<OAuth2AuthorizationRequest> cookieAuthorizationRequestRepository)
+        throws Exception {
 
-                .oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(authz -> authz
-                                .baseUri("/oauth2/authorize")
-                                .authorizationRequestRepository(cookieAuthorizationRequestRepository))
-                        .redirectionEndpoint(r -> r
-                                .baseUri("/api/v1/auth/oauth2/callback/*"))
-                        .successHandler(oAuth2AuthenticationSuccessHandler)
-                        .failureHandler(oAuth2AuthenticationFailureHandler))
+    http
+        .csrf(c -> c.disable())
+        .cors(Customizer.withDefaults())
+        .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/api/v1/auth/**", "/").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/jobs/**").permitAll()
+                .anyRequest().authenticated()
+        )
+        .exceptionHandling(ex -> ex
+            .authenticationEntryPoint((request, response, authException) -> {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Unauthorized\"}");
+            })
+        )
+        .oauth2Login(oauth2 -> oauth2
+                .authorizationEndpoint(authz -> authz
+                        .baseUri("/oauth2/authorize")
+                        .authorizationRequestRepository(cookieAuthorizationRequestRepository))
+                .redirectionEndpoint(r -> r
+                        .baseUri("/api/v1/auth/oauth2/callback/*"))
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler)
+        )
+        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+        .formLogin(f -> f.disable())
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-                .formLogin(f -> f.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        return http.build();
-    }
+    return http.build();
+}
+
 
     @Bean
     public JwtDecoder jwtDecoder() {

@@ -1,4 +1,7 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { useNotification } from '../hooks/useNotification';
 
 /**
  * Axios instance
@@ -85,58 +88,86 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Nếu 401 và chưa retry
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      // Nếu đang refresh, đợi
+    // Kiểm tra nếu là lỗi 401 và chưa retry
+    if (
+      error.response?.status === 401 && 
+      !originalRequest._retry &&
+      originalRequest.url !== '/auth/refresh' // Tránh refresh token loop
+    ) {
+      // Nếu đang refresh, thêm request vào queue
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then(token => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return apiClient(originalRequest);
-          })
-          .catch(err => {
-            return Promise.reject(err);
+        try {
+          const token = await new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
           });
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return apiClient(originalRequest);
+        } catch (err) {
+          return Promise.reject(err);
+        }
       }
 
       originalRequest._retry = true;
       isRefreshing = true;
 
       try {
-        // Gọi refresh token API (refresh_token tự động gửi qua cookie)
-        // Sử dụng axios trực tiếp để tránh circular interceptor call
+        // Gọi refresh token API với timeout ngắn hơn
         const response = await axios.get('http://localhost:8080/api/v1/auth/refresh', {
           withCredentials: true,
-          timeout: 10000
+          timeout: 5000 // Giảm timeout để fail fast
         });
 
         const newAccessToken = response.data.access_token;
-        
-        // Lưu access token mới
+        if (!newAccessToken) {
+          throw new Error('No access token received');
+        }
+
+        // Lưu token mới
         setAccessToken(newAccessToken);
         
-        // Xử lý các request đang chờ
+        // Xử lý queue
         processQueue(null, newAccessToken);
         
-        // Retry original request với token mới
+        // Retry request gốc
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return apiClient(originalRequest);
         
       } catch (refreshError) {
+        // Xử lý lỗi refresh token
         processQueue(refreshError, null);
         clearAccessToken();
+
+        // Nếu refresh token hết hạn hoặc không hợp lệ
+        if (refreshError.response?.status === 401 || refreshError.response?.status === 403) {
+          // Clear storage và redirect về login
+          const { logout } = useAuth();
+          const { showError } = useNotification();
+          
+          await logout(); // This will clear storage and auth context
+          showError('Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.');
+          window.location.href = '/login';
+        } else {
+          // Các lỗi khác (network, server, etc)
+          console.error('Refresh token error:', refreshError);
+          const { showError } = useNotification();
+          showError('Có lỗi xảy ra khi làm mới phiên làm việc. Vui lòng đăng nhập lại.');
+          window.location.href = '/login';
+        }
         
-        // Redirect về login
-        window.location.href = '/login';
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
 
-    console.error('❌ Response Error:', error);
+    // Xử lý các lỗi không phải 401
+    console.error('❌ Response Error:', {
+      status: error.response?.status,
+      url: error.config?.url,
+      message: error.response?.data?.message || error.message
+    });
+
+    // Trả về error message từ server hoặc default message
     const errorMessage = error.response?.data?.message || error.message || 'Something went wrong';
     return Promise.reject(new Error(errorMessage));
   }
