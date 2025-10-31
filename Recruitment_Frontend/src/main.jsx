@@ -14,6 +14,7 @@ import RegisterPage from './pages/RegisterPage'
 // import GoogleLoginTest from './GoogleLoginTest'
 import AllJobPage from './pages/jobs/AllJobsPage'
 import UsersPage from './pages/users/UserPage'
+import CreateJobPage from './pages/jobs/CreateJobPage'
 // import SearchJobPage from './pages/jobs/SearchJobsPage'
 // import SavedJobsPage from './pages/jobs/SavedJobsPage'
 // import JobDetailPage from './pages/jobs/JobDetailPage'
@@ -59,22 +60,17 @@ const router = createBrowserRouter([
             <AllJobPage />
           </ProtectedRoute>
       },
-      // {
-      //   path: "search",
-      //   element: <SearchJobPage />
-      // },
-      // {
-      //   path: "saved-jobs",
-      //   element: <SavedJobsPage />
-      // },
+      {
+        path: "jobs/create",
+        element:
+          <ProtectedRoute>
+            <CreateJobPage />
+          </ProtectedRoute>
+      },
       // {
       //   path: "",
       //   element: <Navigate to="/dashboard" replace />
       // },
-      // {
-      //   path: "/jobs/:id",
-      //   element: <JobDetailPage />
-      // }
     ]
   }
 ])

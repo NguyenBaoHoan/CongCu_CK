@@ -73,6 +73,13 @@ const jobService = {
             }
         };
     },
+
+    createNewJob: async (request) => {
+        const response = await apiClient.post(`/jobs`, request);
+        return response.data;
+    },
+
+
 }
 
 export default jobService;
