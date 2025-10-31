@@ -40,7 +40,7 @@ apiClient.interceptors.request.use(
 
     if (import.meta.env.DEV) {
       const method = (config.method || '').toUpperCase();
-      console.log(`🚀 [${method}] ${config.url}`);
+      // console.log(`🚀 [${method}] ${config.url}`);
     }
 
     return config;
@@ -62,7 +62,7 @@ const processQueue = (error, token = null) => {
 apiClient.interceptors.response.use(
   (response) => {
     if (import.meta.env.DEV) {
-      console.log(`✅ [${response.status}] ${response.config.url}`);
+      // console.log(`✅ [${response.status}] ${response.config.url}`);
     }
     return response;
   },

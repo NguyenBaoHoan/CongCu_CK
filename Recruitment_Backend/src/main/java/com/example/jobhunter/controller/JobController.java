@@ -9,7 +9,9 @@ import com.example.jobhunter.service.JobService;
 import com.example.jobhunter.util.error.IdInvalidException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import com.turkraft.springfilter.boot.Filter;
 
 import java.util.Optional;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
@@ -34,9 +33,12 @@ public class JobController {
 
     @GetMapping
     public ResponseEntity<ResultPaginationDTO> getAllJobs(
-            @Filter Specification<Job> spec,
-            Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(jobService.fetchAllJob(spec, pageable));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @Filter Specification<Job> spec) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return ResponseEntity.ok(jobService.fetchAllJob(spec, pageable));
     }
 
     @PostMapping

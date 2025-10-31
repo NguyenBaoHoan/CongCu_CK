@@ -7,146 +7,10 @@ import jobService from "../../services/jobService";
 const AllJobsPage = () => {
     const navigate = useNavigate();
 
-    // Enhanced Mock data với nhiều công việc đa dạng
-    // const jobs = [
-    //     {
-    //         id: 1,
-    //         name: "Frontend Developer (ReactJS) - Senior Level với kinh nghiệm từ 5 năm trở lên",
-    //         location: "Hồ Chí Minh",
-    //         salary: "20,000,000 - 30,000,000 VNĐ",
-    //         job_type: "Full-time",
-    //         work_address: "Tòa nhà ABC, Quận 1, TP.HCM",
-    //         start_date: "2025-01-01",
-    //         end_date: "2025-02-15",
-    //         active: true,
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "Backend Developer (Spring Boot, Microservices, Cloud AWS) - Chuyên viên cao cấp",
-    //         location: "Hà Nội",
-    //         salary: "25,000,000 - 35,000,000 VNĐ",
-    //         job_type: "Full-time",
-    //         work_address: "Tòa nhà XYZ, Quận Cầu Giấy, Hà Nội",
-    //         start_date: "2025-02-01",
-    //         end_date: "2025-03-10",
-    //         active: false,
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "UI/UX Designer",
-    //         location: "Đà Nẵng",
-    //         salary: "15,000,000 - 22,000,000 VNĐ",
-    //         job_type: "Part-time",
-    //         work_address: "123 Lê Duẩn, Đà Nẵng",
-    //         start_date: "2025-01-15",
-    //         end_date: "2025-02-28",
-    //         active: true,
-    //     },
-    //     {
-    //         id: 4,
-    //         name: "Data Analyst - Business Intelligence Specialist với Python và SQL",
-    //         location: "Cần Thơ",
-    //         salary: "18,000,000 - 25,000,000 VNĐ",
-    //         job_type: "Internship",
-    //         work_address: "45 Nguyễn Văn Cừ, Cần Thơ",
-    //         start_date: "2025-01-20",
-    //         end_date: "2025-03-20",
-    //         active: true,
-    //     },
-    //     {
-    //         id: 5,
-    //         name: "Mobile Developer (Flutter & React Native Cross Platform)",
-    //         location: "Hồ Chí Minh",
-    //         salary: "22,000,000 - 32,000,000 VNĐ",
-    //         job_type: "Full-time",
-    //         work_address: "Tòa nhà Bitexco, Quận 1, TP.HCM",
-    //         start_date: "2025-02-05",
-    //         end_date: "2025-03-25",
-    //         active: false,
-    //     },
-    //     {
-    //         id: 6,
-    //         name: "DevOps Engineer (Kubernetes, Docker, CI/CD Pipeline)",
-    //         location: "Remote",
-    //         salary: "30,000,000 - 40,000,000 VNĐ",
-    //         job_type: "Remote",
-    //         work_address: "Làm việc từ xa",
-    //         start_date: "2025-01-10",
-    //         end_date: "2025-02-20",
-    //         active: true,
-    //     },
-    //     {
-    //         id: 7,
-    //         name: "Senior Full Stack Developer (Node.js, React, TypeScript, MongoDB, AWS) - Team Lead Position",
-    //         location: "Hồ Chí Minh",
-    //         salary: "45,000,000 - 60,000,000 VNĐ",
-    //         job_type: "Full-time",
-    //         work_address: "Tòa nhà Viettel, Quận 10, TP.HCM",
-    //         start_date: "2025-03-01",
-    //         end_date: "2025-05-01",
-    //         active: true,
-    //     },
-    //     {
-    //         id: 8,
-    //         name: "Artificial Intelligence/Machine Learning Engineer (Python, TensorFlow, PyTorch, Computer Vision) - Research & Development",
-    //         location: "Remote",
-    //         salary: "50,000,000 - 70,000,000 VNĐ",
-    //         job_type: "Remote",
-    //         work_address: "Làm việc từ xa",
-    //         start_date: "2025-02-15",
-    //         end_date: "2025-04-15",
-    //         active: true,
-    //     },
-    //     // Thêm nhiều job hơn để test phân trang
-    //     {
-    //         id: 9,
-    //         name: "Product Manager",
-    //         location: "Hà Nội",
-    //         salary: "35,000,000 - 50,000,000 VNĐ",
-    //         job_type: "Full-time",
-    //         work_address: "Tòa nhà Hà Nội Group",
-    //         start_date: "2025-03-01",
-    //         end_date: "2025-04-30",
-    //         active: true,
-    //     },
-    //     {
-    //         id: 10,
-    //         name: "QA Engineer",
-    //         location: "Đà Nẵng",
-    //         salary: "15,000,000 - 25,000,000 VNĐ",
-    //         job_type: "Full-time",
-    //         work_address: "147 Trần Phú, Đà Nẵng",
-    //         start_date: "2025-02-01",
-    //         end_date: "2025-03-31",
-    //         active: true,
-    //     },
-    //     {
-    //         id: 11,
-    //         name: "System Administrator",
-    //         location: "Hồ Chí Minh",
-    //         salary: "20,000,000 - 30,000,000 VNĐ",
-    //         job_type: "Full-time",
-    //         work_address: "Quận 3, TP.HCM",
-    //         start_date: "2025-01-25",
-    //         end_date: "2025-03-15",
-    //         active: false,
-    //     },
-    //     {
-    //         id: 12,
-    //         name: "Business Analyst",
-    //         location: "Hà Nội",
-    //         salary: "25,000,000 - 35,000,000 VNĐ",
-    //         job_type: "Full-time",
-    //         work_address: "Quận Thanh Xuân, Hà Nội",
-    //         start_date: "2025-02-10",
-    //         end_date: "2025-04-10",
-    //         active: true,
-    //     }
-    // ];
-
     const [jobs, setJobs] = useState([]);
-    const [jobMeta, setJobMeta] = useState();
-    
+    const [jobMeta, setJobMeta] = useState({ total: 0, page: 1, totalPages: 0, size: 6 });
+    const [loading, setLoading] = useState(false);
+
     const [searchTerm, setSearchTerm] = useState("");
     const [locationFilter, setLocationFilter] = useState("");
     const [jobTypeFilter, setJobTypeFilter] = useState("");
@@ -159,40 +23,40 @@ const AllJobsPage = () => {
         let mounted = true;
         (async () => {
             try {
-                const res = await jobService.getAllJobs();
+                setLoading(true);
+                const params = {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                    search: searchTerm || undefined,
+                    location: locationFilter || undefined,
+                    jobType: jobTypeFilter || undefined,
+                    active: statusFilter || undefined
+                };
+                const res = await jobService.getAllJobs(params);
                 if (mounted) {
-                    setJobs(res.result);
-                    setJobMeta(res.meta)
+
+                    setJobs(Array.isArray(res.result) ? res.result : []);
+                    setJobMeta(res.meta || { total: 0, page: currentPage, totalPages: 0, size: itemsPerPage });
                 }
             } catch (err) {
                 console.error(err);
             }
+            finally {
+                if (mounted) setLoading(false);
+            }
         })();
         return () => { mounted = false; };
-    }, []);
+    }, [currentPage, itemsPerPage, searchTerm, locationFilter, jobTypeFilter, statusFilter]);
 
-    console.log(jobs);
+    // console.log(jobs);
+    // console.log("job meta: ", jobMeta);
 
-    const filteredJobs = useMemo(() => {
-        return jobs.filter(job => {
-            const matchesSearch = job.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                job.location.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesLocation = !locationFilter || job.location === locationFilter;
-            const matchesJobType = !jobTypeFilter || job.jobType === jobTypeFilter;
-            const matchesStatus = !statusFilter ||
-                (statusFilter === "active" && job.active) ||
-                (statusFilter === "inactive" && !job.active);
-
-            return matchesSearch && matchesLocation && matchesJobType && matchesStatus;
-        });
-    }, [jobs, searchTerm, locationFilter, jobTypeFilter, statusFilter]);
-
-    // Pagination calculations
-    const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
-    const displayedJobs = useMemo(() => {
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        return filteredJobs.slice(startIndex, startIndex + itemsPerPage);
-    }, [filteredJobs, currentPage, itemsPerPage]);
+    const totalPages = jobMeta?.totalPages
+        ? Number(jobMeta.totalPages)
+        : jobMeta?.total
+            ? Math.max(1, Math.ceil(Number(jobMeta.total) / Number(jobMeta.size || itemsPerPage)))
+            : 0;
+    const displayedJobs = jobs || [];
 
     // Generate pagination items with better logic
     const getPaginationItems = () => {
@@ -232,11 +96,13 @@ const AllJobsPage = () => {
     };
 
     // Get unique values for filters
-    const locations = [...new Set(jobs.map(job => job.location))];
-    const jobTypes = [...new Set(jobs.map(job => job.jobType))];
+    const locations = [...new Set(jobs?.map(job => job.location) || [])];
+    const jobTypes = [...new Set(jobs?.map(job => job.jobType) || [])];
 
     const handlePageChange = (page) => {
-        setCurrentPage(page);
+        const p = Number(page);
+        if (!p || p < 1 || p > totalPages) return;
+        setCurrentPage(p);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -262,7 +128,7 @@ const AllJobsPage = () => {
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900">Danh sách việc làm</h1>
                             <p className="text-gray-600 mt-2">
-                                Hiển thị {displayedJobs.length} trong tổng số {filteredJobs.length} công việc phù hợp
+                                Hiển thị {displayedJobs.length} trong tổng số {jobMeta?.total || 0} công việc phù hợp
                             </p>
                         </div>
                         <button
@@ -355,8 +221,8 @@ const AllJobsPage = () => {
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                                 >
                                     <option value="">Tất cả trạng thái</option>
-                                    <option value="active">Đang tuyển</option>
-                                    <option value="inactive">Hết hạn</option>
+                                    <option value="true">Đang tuyển</option>
+                                    <option value="false">Hết hạn</option>
                                 </select>
                             </div>
                         </div>
@@ -425,14 +291,14 @@ const AllJobsPage = () => {
                             {totalPages > 1 && (
                                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8">
                                     <div className="text-sm text-gray-600">
-                                        Hiển thị {Math.min((currentPage - 1) * itemsPerPage + 1, filteredJobs.length)}-
-                                        {Math.min(currentPage * itemsPerPage, filteredJobs.length)} của {filteredJobs.length} công việc
+                                        Hiển thị {Math.min((currentPage - 1) * itemsPerPage + 1, jobMeta?.total || 0)}-
+                                        {Math.min(currentPage * itemsPerPage, jobMeta?.total || 0)} của {jobMeta?.total || 0} công việc
                                     </div>
 
                                     <div className="flex items-center space-x-1">
                                         <button
-                                            onClick={() => handlePageChange(1)}
-                                            disabled={currentPage === 1}
+                                            onClick={() => !loading && handlePageChange(1)}
+                                            disabled={loading || currentPage === 1}
                                             className="px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-1 text-sm"
                                             title="Trang đầu"
                                         >
@@ -442,8 +308,8 @@ const AllJobsPage = () => {
                                         </button>
 
                                         <button
-                                            onClick={() => handlePageChange(currentPage - 1)}
-                                            disabled={currentPage === 1}
+                                            onClick={() => !loading && handlePageChange(currentPage - 1)}
+                                            disabled={loading || currentPage === 1}
                                             className="px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-1 text-sm"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -464,7 +330,8 @@ const AllJobsPage = () => {
                                             return (
                                                 <button
                                                     key={index}
-                                                    onClick={() => handlePageChange(item)}
+                                                    onClick={() => !loading && handlePageChange(item)}
+                                                    disabled={loading}
                                                     className={`px-3 py-2 rounded-lg border transition text-sm ${currentPage === item
                                                         ? "bg-blue-600 text-white border-blue-600"
                                                         : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
@@ -476,8 +343,8 @@ const AllJobsPage = () => {
                                         })}
 
                                         <button
-                                            onClick={() => handlePageChange(currentPage + 1)}
-                                            disabled={currentPage === totalPages}
+                                            onClick={() => !loading && handlePageChange(currentPage + 1)}
+                                            disabled={loading || currentPage === totalPages}
                                             className="px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-1 text-sm"
                                         >
                                             Sau
@@ -487,8 +354,8 @@ const AllJobsPage = () => {
                                         </button>
 
                                         <button
-                                            onClick={() => handlePageChange(totalPages)}
-                                            disabled={currentPage === totalPages}
+                                            onClick={() => !loading && handlePageChange(totalPages)}
+                                            disabled={loading || currentPage === totalPages}
                                             className="px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-1 text-sm"
                                             title="Trang cuối"
                                         >
