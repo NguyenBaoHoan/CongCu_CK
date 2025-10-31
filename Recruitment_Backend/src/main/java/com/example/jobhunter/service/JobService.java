@@ -51,6 +51,7 @@ public class JobService {
         curJob.setName(job.getName());
         curJob.setLocation(job.getLocation());
         curJob.setSalary(job.getSalary());
+        curJob.setJobType(job.getJobType());
         curJob.setEducationLevel(job.getEducationLevel());
         curJob.setDescription(job.getDescription());
         curJob.setRequirements(job.getRequirements());

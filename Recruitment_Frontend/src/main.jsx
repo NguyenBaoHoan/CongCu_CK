@@ -15,6 +15,7 @@ import RegisterPage from './pages/RegisterPage'
 import AllJobPage from './pages/jobs/AllJobsPage'
 import UsersPage from './pages/users/UserPage'
 import CreateJobPage from './pages/jobs/CreateJobPage'
+import UpdateJobPage from './pages/jobs/UpdateJobPage'
 // import SearchJobPage from './pages/jobs/SearchJobsPage'
 // import SavedJobsPage from './pages/jobs/SavedJobsPage'
 // import JobDetailPage from './pages/jobs/JobDetailPage'
@@ -65,6 +66,13 @@ const router = createBrowserRouter([
         element:
           <ProtectedRoute>
             <CreateJobPage />
+          </ProtectedRoute>
+      },
+      {
+        path: "jobs/:id/edit",
+        element:
+          <ProtectedRoute>
+            <UpdateJobPage />
           </ProtectedRoute>
       },
       // {

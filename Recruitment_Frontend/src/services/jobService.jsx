@@ -79,6 +79,16 @@ const jobService = {
         return response.data;
     },
 
+    getJobById: async (id) => {
+        const response = await apiClient.get(`/jobs/${id}`);
+        return response.data;
+    },
+
+    updateJob: async (id, request) => {
+        const response = await apiClient.put(`/jobs/${id}`, request);
+        return response.data;
+    },
+
 
 }
 

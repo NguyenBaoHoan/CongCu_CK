@@ -282,7 +282,7 @@ const AllJobsPage = () => {
                                     <JobListItem
                                         key={job.id}
                                         job={job}
-                                        onClick={(job) => navigate(`/jobs/${job.id}`)}
+                                        onClick={(job) => navigate(`/jobs/${job.id}/edit`)}
                                     />
                                 ))}
                             </div>
