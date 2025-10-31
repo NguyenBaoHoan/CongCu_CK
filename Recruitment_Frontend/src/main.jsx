@@ -28,9 +28,17 @@ const router = createBrowserRouter([
         element: <LoginPage />
       },
       {
-        path: "register",
-        element: <RegisterPage />
+        path: "users",
+        element: (
+          <ProtectedRoute>
+            <UsersPage />
+          </ProtectedRoute>
+        )
       },
+      // {
+      //   path: "register",
+      //   element: <RegisterPage />
+      // },
       // {
       //   path: "test-google",
       //   element: <GoogleLoginTest />

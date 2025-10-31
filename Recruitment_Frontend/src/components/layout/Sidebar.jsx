@@ -65,6 +65,12 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onToggle, onClose, user }) => {
       badge: null
     },
     { 
+      icon: User, 
+      label: 'Users', 
+      path: '/users',
+      badge: null
+    },
+    { 
       icon: Bell, 
       label: 'Notifications', 
       path: '/notifications',
