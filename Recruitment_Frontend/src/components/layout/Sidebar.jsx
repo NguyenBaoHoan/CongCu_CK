@@ -34,60 +34,60 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onToggle, onClose, user }) => {
       path: '/jobs',
       badge: null
     },
-    { 
-      icon: Search, 
-      label: 'Search Jobs', 
-      path: '/search',
-      badge: null
-    },
-    { 
-      icon: Heart, 
-      label: 'Saved Jobs', 
-      path: '/saved-jobs',
-      badge: '12'
-    },
-    { 
-      icon: FileText, 
-      label: 'Applications', 
-      path: '/applications',
-      badge: '5'
-    },
-    { 
-      icon: TrendingUp, 
-      label: 'Analytics', 
-      path: '/analytics',
-      badge: null
-    },
-    { 
-      icon: Users, 
-      label: 'Network', 
-      path: '/network',
-      badge: null
-    },
+    // { 
+    //   icon: Search, 
+    //   label: 'Search Jobs', 
+    //   path: '/search',
+    //   badge: null
+    // },
+    // { 
+    //   icon: Heart, 
+    //   label: 'Saved Jobs', 
+    //   path: '/saved-jobs',
+    //   badge: '12'
+    // },
+    // { 
+    //   icon: FileText, 
+    //   label: 'Applications', 
+    //   path: '/applications',
+    //   badge: '5'
+    // },
+    // { 
+    //   icon: TrendingUp, 
+    //   label: 'Analytics', 
+    //   path: '/analytics',
+    //   badge: null
+    // },
+    // { 
+    //   icon: Users, 
+    //   label: 'Network', 
+    //   path: '/network',
+    //   badge: null
+    // },
     { 
       icon: User, 
       label: 'Users', 
       path: '/users',
       badge: null
     },
-    { 
-      icon: Bell, 
-      label: 'Notifications', 
-      path: '/notifications',
-      badge: '3'
-    },
-    { 
-      icon: User, 
-      label: 'Profile', 
-      path: '/profile',
-      badge: null
-    },
-    { 
-      icon: Settings, 
-      label: 'Settings', 
-      path: '/settings',
-      badge: null
-    },
+    // { 
+    //   icon: Bell, 
+    //   label: 'Notifications', 
+    //   path: '/notifications',
+    //   badge: '3'
+    // },
+    // { 
+    //   icon: User, 
+    //   label: 'Profile', 
+    //   path: '/profile',
+    //   badge: null
+    // },
+    // { 
+    //   icon: Settings, 
+    //   label: 'Settings', 
+    //   path: '/settings',
+    //   badge: null
+    // },
   ];
 
   const handleLogout = async () => {

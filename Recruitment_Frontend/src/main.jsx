@@ -10,7 +10,7 @@ import ProtectedRoute from './components/layout/ProtectedRoute'
 import App from './App'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
-// // import DashboardPage from './pages/DashboardPage'
+import DashboardPage from './pages/DashboarđPage'
 // import GoogleLoginTest from './GoogleLoginTest'
 import AllJobPage from './pages/jobs/AllJobsPage'
 import UsersPage from './pages/users/UserPage'
@@ -46,14 +46,14 @@ const router = createBrowserRouter([
       //   path: "test-google",
       //   element: <GoogleLoginTest />
       // },
-      // {
-      //   path: "dashboard",
-      //   element: (
-      //     <ProtectedRoute>
-      //       <DashboardPage />
-      //     </ProtectedRoute>
-      //   )
-      // },
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        )
+      },
       {
         path: "jobs",
         element:
@@ -75,10 +75,10 @@ const router = createBrowserRouter([
             <UpdateJobPage />
           </ProtectedRoute>
       },
-      // {
-      //   path: "",
-      //   element: <Navigate to="/dashboard" replace />
-      // },
+      {
+        path: "",
+        element: <Navigate to="/dashboard" replace />
+      },
     ]
   }
 ])
