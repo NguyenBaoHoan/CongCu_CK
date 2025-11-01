@@ -2,10 +2,13 @@ package com.example.jobhunter.util;
 
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+import org.springframework.stereotype.Component;
+
+import com.example.jobhunter.util.CookieUtil; // You need to create this too (See below)
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils; // Add dependency: org.apache.commons:commons-lang3
 
 /**
  * Stores OAuth2AuthorizationRequest in an HTTP cookie.
