@@ -1,4 +1,3 @@
-// Recruitment_Frontend/src/components/auth/OAuthButtons.jsx
 import { useState } from 'react';
 import OAUTH_CONFIG from '../../config/oauth.config';
 
